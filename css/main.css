@@ -63,11 +63,17 @@
 }
 
 /* ─── BASE ─── */
+html {
+  height: 100%;
+  overflow: hidden; /* no scrolling ever */
+}
+
 body {
   font-family: 'DM Sans', sans-serif;
   background: var(--bg);
   color: var(--text);
-  min-height: 100vh;
+  height: 100dvh;       /* exact viewport height, respects mobile chrome */
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -78,15 +84,16 @@ body {
 header {
   width: 100%;
   max-width: 520px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 16px 8px;
+  padding: clamp(8px, 2vh, 16px) 16px clamp(4px, 1vh, 8px);
 }
 
 .logo {
   font-family: 'DM Serif Display', serif;
-  font-size: 28px;
+  font-size: clamp(20px, 3.5vh, 28px);
   letter-spacing: -0.5px;
   color: var(--text);
 }
@@ -121,11 +128,12 @@ header {
 .stats-row {
   width: 100%;
   max-width: 520px;
+  flex-shrink: 0;
   padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: clamp(4px, 1vh, 10px);
   gap: 8px;
 }
 
@@ -137,9 +145,9 @@ header {
 
 .timer {
   font-family: 'DM Serif Display', serif;
-  font-size: 22px;
+  font-size: clamp(16px, 2.8vh, 22px);
   letter-spacing: 1px;
-  min-width: 52px;
+  min-width: 48px;
 }
 
 .pause-btn {
@@ -217,13 +225,24 @@ header {
   width: 100%;
   max-width: 520px;
   padding: 0 16px;
-  margin-bottom: 14px;
+  margin-bottom: clamp(6px, 1.2vh, 14px);
   position: relative;
+  /* Take all remaining vertical space; board shrinks to fit */
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .board {
+  /* Fill available width but never exceed the available height */
   width: 100%;
   aspect-ratio: 1;
+  max-height: 100%;
+  /* If the container is shorter than its width, size by height instead */
+  max-width: min(100%, 100cqh);
+  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(9, 1fr);
   border: 2.5px solid var(--box-border);
@@ -311,7 +330,7 @@ header {
 
 .cell-num {
   font-family: 'DM Serif Display', serif;
-  font-size: clamp(16px, 3.5vw, 22px);
+  font-size: clamp(12px, 2.8vmin, 22px);
   line-height: 1;
   pointer-events: none;
 }
@@ -336,7 +355,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(6px, 1.2vw, 9px);
+  font-size: clamp(5px, 0.9vmin, 9px);
   font-weight: 500;
   color: var(--note-color);
   line-height: 1;
@@ -346,10 +365,11 @@ header {
 .controls {
   width: 100%;
   max-width: 520px;
+  flex-shrink: 0;
   padding: 0 16px;
   display: flex;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: clamp(4px, 1vh, 12px);
 }
 
 .ctrl-btn {
@@ -387,11 +407,12 @@ header {
 .numpad {
   width: 100%;
   max-width: 520px;
+  flex-shrink: 0;
   padding: 0 16px;
   display: grid;
   grid-template-columns: repeat(9, 1fr);
-  gap: 6px;
-  margin-bottom: 20px;
+  gap: clamp(3px, 0.8vw, 6px);
+  margin-bottom: clamp(6px, 1.2vh, 20px);
 }
 
 .num-btn {
@@ -404,7 +425,7 @@ header {
   background: var(--surface);
   color: var(--text);
   font-family: 'DM Serif Display', serif;
-  font-size: clamp(16px, 3.5vw, 22px);
+  font-size: clamp(13px, 2.5vh, 22px);
   cursor: pointer;
   transition: all 0.12s;
   -webkit-tap-highlight-color: transparent;
@@ -418,7 +439,8 @@ header {
 .bottom-actions {
   width: 100%;
   max-width: 520px;
-  padding: 0 16px 30px;
+  flex-shrink: 0;
+  padding: 0 16px clamp(10px, 2vh, 24px);
   display: flex;
   gap: 10px;
   justify-content: center;
@@ -426,10 +448,10 @@ header {
 
 .action-btn {
   flex: 1;
-  padding: 12px 0;
+  padding: clamp(8px, 1.5vh, 12px) 0;
   border-radius: 50px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
+  font-size: clamp(11px, 1.8vh, 13px);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
@@ -532,6 +554,8 @@ header {
 .loading-board {
   width: 100%;
   aspect-ratio: 1;
+  max-height: 100%;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -563,6 +587,14 @@ header {
 
 /* ─── RESPONSIVE ─── */
 @media (max-width: 400px) {
-  .ctrl-btn       { padding: 6px 4px; font-size: 9px; }
-  .ctrl-btn .icon { width: 16px; height: 16px; }
+  .ctrl-btn       { padding: 5px 4px; font-size: 9px; }
+  .ctrl-btn .icon { width: 15px; height: 15px; }
+}
+
+/* Very short screens (e.g. landscape phone) — tighten further */
+@media (max-height: 640px) {
+  .ctrl-btn       { padding: 4px 6px; font-size: 9px; gap: 2px; }
+  .ctrl-btn .icon { width: 15px; height: 15px; }
+  .icon-btn       { width: 32px; height: 32px; }
+  .pause-btn      { width: 26px; height: 26px; }
 }

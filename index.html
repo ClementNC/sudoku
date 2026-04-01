@@ -1,127 +1,196 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sudoku</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/main.css">
-</head>
-<body>
-
-  <!-- ─── HEADER ─── -->
-  <header>
-    <div class="logo">Sudoku</div>
-    <div class="header-right">
-      <button class="icon-btn" id="themeToggle" title="Toggle theme">
-        <!-- icon injected by JS -->
-      </button>
-    </div>
-  </header>
-
-  <!-- ─── STATS ROW ─── -->
-  <div class="stats-row">
-    <div class="timer-group">
-      <div class="timer" id="timer">0:00</div>
-      <button class="pause-btn" id="pauseBtn" title="Pause (Space)">
-        <!-- icon injected by JS -->
-      </button>
-    </div>
-    <span class="diff-pill medium" id="diffPill">Medium</span>
-    <div class="mistakes-badge">
-      <span style="font-size:12px;font-weight:500;">Mistakes</span>
-      <div class="mistake-dots">
-        <div class="mistake-dot" id="md0"></div>
-        <div class="mistake-dot" id="md1"></div>
-        <div class="mistake-dot" id="md2"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─── BOARD ─── -->
-  <div class="board-wrap">
-    <div class="board" id="board">
-      <div class="loading-board"><div class="spinner"></div></div>
-    </div>
-    <div class="pause-screen" id="pauseScreen">
-      <div class="pause-screen-icon" id="pauseScreenIcon"></div>
-      <div class="pause-screen-text">Game Paused</div>
-      <div class="pause-screen-sub">Tap to resume</div>
-    </div>
-  </div>
-
-  <!-- ─── CONTROLS ─── -->
-  <div class="controls">
-    <button class="ctrl-btn" id="undoBtn" title="Undo (Ctrl+Z)">
-      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/>
-      </svg>
-      <span>Undo</span>
-    </button>
-    <button class="ctrl-btn" id="eraseBtn" title="Erase">
-      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 20H7L3 16l10-10 7 7-3.5 3.5"/><path d="M6.5 17.5l4-4"/>
-      </svg>
-      <span>Erase</span>
-    </button>
-    <button class="ctrl-btn" id="noteBtn" title="Toggle notes (N)">
-      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
-      </svg>
-      <span>Notes</span>
-    </button>
-    <button class="ctrl-btn hint-btn" id="hintBtn" title="Hint">
-      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--hint-gold)">
-        <path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.9 10 19 8.6 19 7a7 7 0 0 0-14 0c0 1.6 1.1 3 2.5 4.5.8.8 1.3 1.5 1.5 2.5"/>
-        <path d="M9 18h6"/><path d="M10 22h4"/>
-      </svg>
-      <span>Hint</span>
-      <span class="hint-count" id="hintCount">3 left</span>
-    </button>
-  </div>
-
-  <!-- ─── NUMPAD ─── -->
-  <div class="numpad" id="numpad"></div>
-
-  <!-- ─── BOTTOM ACTIONS ─── -->
-  <div class="bottom-actions">
-    <button class="action-btn outline" id="restartBtn">
-      <svg style="width:14px;height:14px;vertical-align:-2px;margin-right:5px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>
-      </svg>Restart
-    </button>
-    <button class="action-btn filled" id="newGameBtn">New Game</button>
-  </div>
-
-  <!-- ─── WIN MODAL ─── -->
-  <div class="overlay" id="winOverlay">
-    <div class="modal">
-      <div class="modal-emoji">🎉</div>
-      <div class="modal-title">Solved!</div>
-      <div class="modal-sub" id="winSubtitle"></div>
-      <div class="modal-actions">
-        <button class="modal-btn primary" id="winNewGame">New Game</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─── GAME OVER MODAL ─── -->
-  <div class="overlay" id="gameOverOverlay">
-    <div class="modal">
-      <div class="modal-title">Game Over</div>
-      <div class="modal-sub" id="gameOverSub"></div>
-      <div class="modal-actions">
-        <button class="modal-btn primary" id="goRestart">
-          <svg style="width:15px;height:15px;vertical-align:-3px;margin-right:6px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>
-          </svg>Try Again
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sudoku</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/main.css" />
+  </head>
+  <body>
+    <!-- ─── HEADER ─── -->
+    <header>
+      <div class="logo">Sudoku</div>
+      <div class="header-right">
+        <button class="icon-btn" id="themeToggle" title="Toggle theme">
+          <!-- icon injected by JS -->
         </button>
-        <button class="modal-btn secondary" id="goNewGame">New Game</button>
+      </div>
+    </header>
+
+    <!-- ─── STATS ROW ─── -->
+    <div class="stats-row">
+      <div class="timer-group">
+        <div class="timer" id="timer">0:00</div>
+        <button class="pause-btn" id="pauseBtn" title="Pause (Space)">
+          <!-- icon injected by JS -->
+        </button>
+      </div>
+      <span class="diff-pill medium" id="diffPill">Medium</span>
+      <div class="mistakes-badge">
+        <span style="font-size: 12px; font-weight: 500">Mistakes</span>
+        <div class="mistake-dots">
+          <div class="mistake-dot" id="md0"></div>
+          <div class="mistake-dot" id="md1"></div>
+          <div class="mistake-dot" id="md2"></div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <script type="module" src="src/main.js"></script>
-</body>
+    <!-- ─── BOARD ─── -->
+    <div class="board-wrap">
+      <div class="board" id="board">
+        <div class="loading-board"><div class="spinner"></div></div>
+      </div>
+      <div class="pause-screen" id="pauseScreen">
+        <div class="pause-screen-icon" id="pauseScreenIcon"></div>
+        <div class="pause-screen-text">Game Paused</div>
+        <div class="pause-screen-sub">Tap to resume</div>
+      </div>
+    </div>
+
+    <!-- ─── CONTROLS ─── -->
+    <div class="controls">
+      <button class="ctrl-btn" id="undoBtn" title="Undo (Ctrl+Z)">
+        <svg
+          class="icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="9 14 4 9 9 4" />
+          <path d="M20 20v-7a4 4 0 0 0-4-4H4" />
+        </svg>
+        <span>Undo</span>
+      </button>
+      <button class="ctrl-btn" id="eraseBtn" title="Erase">
+        <svg
+          class="icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M20 20H7L3 16l10-10 7 7-3.5 3.5" />
+          <path d="M6.5 17.5l4-4" />
+        </svg>
+        <span>Erase</span>
+      </button>
+      <button class="ctrl-btn" id="noteBtn" title="Toggle notes (N)">
+        <svg
+          class="icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 20h9" />
+          <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+        </svg>
+        <span>Notes</span>
+      </button>
+      <button class="ctrl-btn hint-btn" id="hintBtn" title="Hint">
+        <svg
+          class="icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          style="color: var(--hint-gold)"
+        >
+          <path
+            d="M15 14c.2-1 .7-1.7 1.5-2.5C17.9 10 19 8.6 19 7a7 7 0 0 0-14 0c0 1.6 1.1 3 2.5 4.5.8.8 1.3 1.5 1.5 2.5"
+          />
+          <path d="M9 18h6" />
+          <path d="M10 22h4" />
+        </svg>
+        <span>Hint</span>
+        <span class="hint-count" id="hintCount">3 left</span>
+      </button>
+    </div>
+
+    <!-- ─── NUMPAD ─── -->
+    <div class="numpad" id="numpad"></div>
+
+    <!-- ─── BOTTOM ACTIONS ─── -->
+    <div class="bottom-actions">
+      <button class="action-btn outline" id="restartBtn">
+        <svg
+          style="
+            width: 14px;
+            height: 14px;
+            vertical-align: -2px;
+            margin-right: 5px;
+          "
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
+          <path d="M3 3v5h5" /></svg
+        >Restart
+      </button>
+      <button class="action-btn filled" id="newGameBtn">New Game</button>
+    </div>
+
+    <!-- ─── WIN MODAL ─── -->
+    <div class="overlay" id="winOverlay">
+      <div class="modal">
+        <div class="modal-emoji">🎉</div>
+        <div class="modal-title">Solved!</div>
+        <div class="modal-sub" id="winSubtitle"></div>
+        <div class="modal-actions">
+          <button class="modal-btn primary" id="winNewGame">New Game</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── GAME OVER MODAL ─── -->
+    <div class="overlay" id="gameOverOverlay">
+      <div class="modal">
+        <div class="modal-title">Game Over</div>
+        <div class="modal-sub" id="gameOverSub"></div>
+        <div class="modal-actions">
+          <button class="modal-btn primary" id="goRestart">
+            <svg
+              style="
+                width: 15px;
+                height: 15px;
+                vertical-align: -3px;
+                margin-right: 6px;
+              "
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
+              <path d="M3 3v5h5" /></svg
+            >Try Again
+          </button>
+          <button class="modal-btn secondary" id="goNewGame">New Game</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="src/main.js"></script>
+  </body>
 </html>
