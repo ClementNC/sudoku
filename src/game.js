@@ -3,7 +3,7 @@ import { fetchPuzzle } from "./puzzle.js";
 import { startTimer, stopTimer, formatTime } from "./timer.js";
 import { renderBoard, renderNumpad, boardEl } from "./board.js";
 import { updateMistakeDots } from "./input.js";
-import { SVG_PAUSE } from "./icons.js";
+import { PAUSE } from "./icons.js";
 
 const timerEl = document.getElementById("timer");
 const hintCountEl = document.getElementById("hintCount");
@@ -69,7 +69,7 @@ export function resetUI() {
   hintBtn.classList.remove("disabled");
   noteBtn.classList.remove("active");
   pauseBtn.classList.remove("paused");
-  pauseBtn.innerHTML = SVG_PAUSE;
+  pauseBtn.innerHTML = PAUSE;
   winOverlay.classList.remove("show");
   gameOverOverlay.classList.remove("show");
   boardEl.classList.remove("blurred");
